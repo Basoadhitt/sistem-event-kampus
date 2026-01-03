@@ -9,9 +9,7 @@ class EventSeeder extends Seeder
 {
     public function run()
     {
-        {
-        $this->call(EventSeeder::class);
-        }
+        
         Event::create([
             'nama_event' => 'Seminar Teknologi',
             'deskripsi' => 'Seminar tentang teknologi terbaru',
