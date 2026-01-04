@@ -9,7 +9,7 @@ class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::all();
+        $events = Event::orderBy('tanggal_event', 'desc')->paginate(5);
         return view('events.index', compact('events'));
     }
 
@@ -19,25 +19,58 @@ class EventController extends Controller
     }
 
     public function store(Request $request)
-    {
-        Event::create($request->all());
-        return redirect()->route('events.index');
-    }
+{
+    $request->validate([
+        'nama_event' => 'required|string|max:255',
+        'deskripsi' => 'required|string',
+        'tanggal_event' => 'required|date',
+        'lokasi' => 'required|string|max:255',
+    ]);
 
-    public function edit(Event $event)
+    Event::create([
+        'nama_event' => $request->nama_event,
+        'deskripsi' => $request->deskripsi,
+        'tanggal_event' => $request->tanggal_event,
+        'lokasi' => $request->lokasi,
+    ]);
+
+    return redirect()->route('events.index')
+        ->with('success', 'Event berhasil ditambahkan');
+}
+
+
+    public function edit($id)
     {
+        $event = Event::findOrFail($id);
         return view('events.edit', compact('event'));
     }
 
-    public function update(Request $request, Event $event)
-    {
-        $event->update($request->all());
-        return redirect()->route('events.index');
-    }
+   public function update(Request $request, $id)
+{
+    $request->validate([
+        'nama_event' => 'required|string|max:255',
+        'deskripsi' => 'required|string',
+        'tanggal_event' => 'required|date',
+        'lokasi' => 'required|string|max:255',
+    ]);
 
-    public function destroy(Event $event)
+    $event = Event::findOrFail($id);
+    $event->update([
+        'nama_event' => $request->nama_event,
+        'deskripsi' => $request->deskripsi,
+        'tanggal_event' => $request->tanggal_event,
+        'lokasi' => $request->lokasi,
+    ]);
+
+    return redirect()->route('events.index')
+        ->with('success', 'Event berhasil diperbarui');
+}
+
+    public function destroy($id)
     {
-        $event->delete();
-        return redirect()->route('events.index');
+        Event::findOrFail($id)->delete();
+
+        return redirect()->route('events.index')
+            ->with('success', 'Event berhasil dihapus');
     }
 }

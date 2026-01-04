@@ -15,4 +15,10 @@ class Event extends Model
         'tanggal_event',
         'lokasi',
     ];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class)->withTimestamps();
+    }
+
 }

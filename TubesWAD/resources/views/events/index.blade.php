@@ -1,39 +1,51 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Daftar Event</title>
-</head>
-<body>
+@extends('layouts.admin')
 
-<h1>Daftar Event</h1>
+@section('title','Manage Event')
 
-<a href="{{ route('events.create') }}">Tambah Event</a>
+@section('content')
 
-<table border="1">
-    <tr>
-        <th>Nama Event</th>
-        <th>Tanggal</th>
-        <th>Lokasi</th>
-        <th>Aksi</th>
-    </tr>
+<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+        <h2>Daftar Event</h2>
 
-    @foreach ($events as $event)
-    <tr>
-        <td>{{ $event->nama_event }}</td>
-        <td>{{ $event->tanggal_event }}</td>
-        <td>{{ $event->lokasi }}</td>
-        <td>
-            <a href="{{ route('events.edit', $event->id) }}">Edit</a>
+        <a href="{{ route('events.create') }}" class="btn btn-add">
+            + Tambah Event
+        </a>
+    </div>
 
-            <form action="{{ route('events.destroy', $event->id) }}" method="POST" style="display:inline;">
-                @csrf
-                @method('DELETE')
-                <button type="submit">Hapus</button>
-            </form>
-        </td>
-    </tr>
-    @endforeach
-</table>
+    @if (session('success'))
+        <p style="color:green">{{ session('success') }}</p>
+    @endif
 
-</body>
-</html>
+    <table>
+        <tr>
+            <th>Nama Event</th>
+            <th>Tanggal</th>
+            <th>Lokasi</th>
+            <th>Aksi</th>
+        </tr>
+
+        @foreach ($events as $event)
+        <tr>
+            <td>{{ $event->nama_event }}</td>
+            <td>{{ $event->tanggal_event }}</td>
+            <td>{{ $event->lokasi }}</td>
+            <td>
+                <a href="{{ route('events.edit',$event->id) }}" class="btn btn-edit">Edit</a>
+
+                <form action="{{ route('events.destroy',$event->id) }}"
+                      method="POST" style="display:inline">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn-delete"
+                        onclick="return confirm('Yakin hapus event?')">
+                        Hapus
+                    </button>
+                </form>
+            </td>
+        </tr>
+        @endforeach
+    </table>
+</div>
+
+@endsection

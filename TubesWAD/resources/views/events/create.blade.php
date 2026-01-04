@@ -1,12 +1,29 @@
-<h1>Tambah Event</h1>
+@extends('layouts.admin')
 
-<form action="{{ route('events.store') }}" method="POST">
-    @csrf
+@section('title','Tambah Event')
 
-    <input type="text" name="nama_event" placeholder="Nama Event"><br>
-    <textarea name="deskripsi" placeholder="Deskripsi"></textarea><br>
-    <input type="date" name="tanggal_event"><br>
-    <input type="text" name="lokasi" placeholder="Lokasi"><br>
+@section('content')
 
-    <button type="submit">Simpan</button>
-</form>
+<div class="card">
+    <h2>Tambah Event</h2>
+
+    <form method="POST" action="{{ route('events.store') }}">
+        @csrf
+
+        <label>Nama Event</label>
+        <input type="text" name="nama_event" required>
+
+        <label>Tanggal Event</label>
+        <input type="date" name="tanggal_event" required>
+
+        <label>Lokasi</label>
+        <input type="text" name="lokasi" required>
+
+        <label>Deskripsi</label>
+        <textarea name="deskripsi"></textarea>
+
+        <button class="btn btn-add">Simpan</button>
+    </form>
+</div>
+
+@endsection

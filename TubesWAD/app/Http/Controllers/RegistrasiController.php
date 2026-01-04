@@ -2,64 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\Event;
+use App\Models\Registrasi;
 use Illuminate\Http\Request;
 
 class RegistrasiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // TAMPILKAN DAFTAR EVENT
     public function index()
     {
-        //
+        $events = Event::orderBy('tanggal_event', 'asc')->get();
+        return view('peserta.events', compact('events'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // TAMPILKAN FORM PENDAFTARAN
+    public function create($id)
     {
-        //
+        $event = Event::findOrFail($id);
+        return view('peserta.daftar', compact('event'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    // SIMPAN PENDAFTARAN
+    public function store(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'nama_peserta' => 'required',
+            'email' => 'required|email',
+            'nomor_hp' => 'required',
+        ]);
+
+        Registrasi::create([
+            'user_id' => auth()->id(),
+            'event_id' => $id,
+            'nama_peserta' => $validated['nama_peserta'],
+            'email' => $validated['email'],
+            'nomor_hp' => $validated['nomor_hp'],
+            'status_registrasi' => 'terdaftar',
+        ]);
+
+        return redirect()
+            ->route('peserta.events.index')
+            ->with('success', 'Berhasil mendaftar event');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // BATALKAN PENDAFTARAN
+    public function batal($id)
     {
-        //
-    }
+        Registrasi::where('user_id', auth()->id())
+            ->where('event_id', $id)
+            ->update(['status_registrasi' => 'dibatalkan']);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return back()->with('success', 'Pendaftaran dibatalkan');
     }
 }
